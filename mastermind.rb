@@ -1,4 +1,93 @@
+module Board
+  
+  def self.display
+    puts "Display the Board"
+  end
+
+  def self.make_board(rows)
+    puts "Created Board with #{rows} rows"
+  end
+
+end
+
 ## Players to choose where codemaker or codebreaker
+
+puts "\t\tMasterMind Demo 1.0\n\n"
+play = 'Y'
+player_one, player_two = ''
+games_count = 0
+
+puts "Welcome!"
+puts
+
+## Game loop starts here
+
+while play == 'Y'
+  
+  puts "Enter how many games to play: "
+  games = gets.chomp.to_i
+  puts
+
+  while games_count < games
+    puts "Enter the number of rows (8 - 12)"
+    number_rows = gets.chomp.to_i
+    loop do
+      case number_rows
+      when 8..12
+        Board.make_board(number_rows)
+        break
+      else
+        puts "Choose between 8 and 12"
+        number_rows = gets.chomp.to_i
+      end
+    end
+
+    puts "Choose profile:\n1. Codemaker\n2. Codebreaker"
+    choice = gets.chomp.to_i
+    loop do
+      case choice
+      when 1
+        player_one = 'codemaker'
+        player_two = 'codebreaker'
+        puts "Player 1 is the '#{player_one}'\nPlayer 2(computer) is the '#{player_two}'"
+        break
+      when 2
+        player_one = 'codebreaker'
+        player_two = 'codemaker'
+        puts "Player 1 is the #{player_one}\nPlayer 2(computer) is the #{player_two}"
+        break
+      else
+        puts "Choose either 1 or 2"
+        choice = gets.chomp.to_i
+      end
+    end
+    games_count += 1
+  end
+
+  puts "Play Again?(Y/N):"
+  play = gets.chomp
+  play.upcase!
+
+  loop do
+    unless (play == 'Y' || play == 'N')
+      puts "Please enter 'y','n', 'Y' or 'N':"
+      play = gets.chomp
+      play.upcase!
+    else
+        break
+    end
+  end
+
+  play == 'Y'? (puts "resume play") : play = 'N'
+end
+
+
+
+
+
+
+
+
 
 # Choose (1) codemaker or (2) comebreaker
 # Choose number of games to play (best of 3?)
@@ -8,12 +97,12 @@
 #### -  repeat colours for code maker or only unique colours?
 #### -  response (review) from codemaker in order or out of order
 ####    selection? That is, position 1 review 1 colour 1
-#### 
+#### -  
 
 # Begin game
 
 # (Game 1 of 3)
-## Setup board of (8?) rows
+## Setup Board of (8?) rows
 
 # -> codemaker 
 #   -   codemaker must place 4 colour code pegs to be broken/guessed
@@ -39,4 +128,4 @@
 #        
 
 
-## Setup board of 8 rows
+## Setup Board of 8 rows
