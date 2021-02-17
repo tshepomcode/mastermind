@@ -16,6 +16,22 @@ puts "\t\tMasterMind Demo 1.0\n\n"
 play = 'Y'
 player_one, player_two = ''
 games_count = 0
+game_rows = 0
+code_pegs = {
+  green: "\e[38;2;0;128;0mgreen\e[0m",
+  blue: "\e[38;2;138;43;226mblue\e[0m",
+  yellow: "\e[38;2;255;255;0myellow\e[0m",
+  cyan: "\e[38;2;0;255;255mcyan\e[0m",
+  purple: "\e[38;2;128;0;128mpurple\e[0m",
+  brown: "\e[38;2;168;42;42mbrown\e[0m"
+}
+
+key_pegs = {
+  white: "\e[38;2;255;255;255mwhite\e[0m",
+  red: "\e[38;2;255;0;0mred\e[0m"
+}
+
+
 
 puts "Welcome!"
 puts
@@ -41,6 +57,9 @@ while play == 'Y'
         number_rows = gets.chomp.to_i
       end
     end
+
+
+    while game_rows < 
 
     puts "Choose profile:\n1. Codemaker\n2. Codebreaker"
     choice = gets.chomp.to_i
