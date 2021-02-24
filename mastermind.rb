@@ -58,27 +58,29 @@ while play == 'Y'
     end
 
 
-    while game_rows < 
-
-    puts "Choose profile:\n1. Codemaker\n2. Codebreaker"
-    choice = gets.chomp.to_i
-    loop do
-      case choice
-      when 1
-        player_one = 'codemaker'
-        player_two = 'codebreaker'
-        puts "Player 1 is the '#{player_one}'\nPlayer 2(computer) is the '#{player_two}'"
-        break
-      when 2
-        player_one = 'codebreaker'
-        player_two = 'codemaker'
-        puts "Player 1 is the #{player_one}\nPlayer 2(computer) is the #{player_two}"
-        break
-      else
-        puts "Choose either 1 or 2"
-        choice = gets.chomp.to_i
+    while game_rows > 0 
+      puts "Choose profile:\n1. Codemaker\n2. Codebreaker"
+      choice = gets.chomp.to_i
+      loop do
+        case choice
+        when 1
+          player_one = 'codemaker'
+          player_two = 'codebreaker'
+          puts "Player 1 is the '#{player_one}'\nPlayer 2(computer) is the '#{player_two}'"
+          break
+        when 2
+          player_one = 'codebreaker'
+          player_two = 'codemaker'
+          puts "Player 1 is the #{player_one}\nPlayer 2(computer) is the #{player_two}"
+          break
+        else
+          puts "Choose either 1 or 2"
+          choice = gets.chomp.to_i
+        end
       end
     end
+
+    
     games_count += 1
   end
 
