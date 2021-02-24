@@ -32,7 +32,6 @@ key_pegs = {
 }
 
 
-
 puts "Welcome!"
 puts
 
