@@ -11,7 +11,6 @@ module Board
 end
 
 module Validator
-
   def get_rows
     puts "Enter the number of rows (8 - 12)"
     rows = gets.chomp.to_i
@@ -19,9 +18,7 @@ module Validator
     loop do
       case rows
       when 8..12
-      # @board = Board.make_board(@game_rows)
-      # Board.make_board(rows)
-      break
+        break
       else
         puts "Choose between 8 and 12"
         rows = gets.chomp.to_i
@@ -48,20 +45,20 @@ module Validator
 
   def get_profile
     players = ["codemaker", "codebreaker"]
-    puts "Choose profile:\n1. Codemaker\n2. Codebreaker"
+    puts "Choose your player profile:\n1. Codemaker\n2. Codebreaker"
       choice = gets.chomp.to_i
       loop do
         case choice
         when 1
-          player_one = 'codemaker'
-          player_two = 'codebreaker'
-          puts "Player 1 is the '#{players.first}'\nPlayer 2(computer) is the '#{players.last}'"
+          # player_one = 'codemaker'
+          # player_two = 'codebreaker'
+          # puts "Player1 is the '#{players.first}'\nPlayer2(computer) is the '#{players.last}'"
           break
         when 2
           players.shuffle!(random: Random.new(2))
-          player_one = 'codebreaker'
-          player_two = 'codemaker'
-          puts "Player 1 is the #{players.first}\nPlayer 2(computer) is the #{players.last}"
+          # player_one = 'codebreaker'
+          # player_two = 'codemaker'
+          # puts "Player1 is the '#{players.first}'\nPlayer2(computer) is the '#{players.last}'"
           break
         else
           puts "Choose either 1 or 2"
@@ -86,6 +83,27 @@ module Validator
     return games
   end
 
+  # select colours of row for human codebreaker
+  def get_selection
+    puts "Select your colours and press enter:"
+    puts "1.green\n2.blue\n3.yellow\n4.cyan\n5.purple\n6.brown"
+    selected = gets.chomp
+
+    #check selection -length and correct numbers
+    loop do
+        if(selected.length != 4)
+            puts "Only four colours should be selected"
+            selected = gets.chomp
+        elsif(!((selected.split(//)).all? {|x| (x.to_i).between?(1,6)}))
+            puts "Select colours between 1-6"
+            selected = gets.chomp
+        else
+            # puts "Correct selection - Update row"
+            break
+        end
+    end
+    return selected
+  end
 end
 
 
@@ -94,7 +112,8 @@ class Mastermind
   include Validator
 
   attr_accessor :code_maker, :code_breaker, :board, :review_pegs,
-  :game_count, :game_rows, :play, :player1, :player2
+  :game_count, :game_rows, :play, :player1, :player2, :secret_code,
+  :computer_selection
   attr_reader :colour_pegs, :code_pegs
 
   def initialize
@@ -123,8 +142,65 @@ class Mastermind
     @player2 = players.last
   end
 
-end
+  def select_code
+    if @player1 == 'codemaker'
+      puts "You are the #{@player1}"
+      puts "The computer is the #{@player2}"
+      puts
+      # you choose the code
+      @secret_code = "1234"
+    else
+      puts "You are the #{@player1}"
+      puts "The computer is the #{@player2}"
+      puts
+      values = @colour_pegs.values
+      extra_values = []
+      values.cycle(3) {|x| extra_values << x}
+      puts "----- Secret Code -----"
+      @secret_code = extra_values.sample(4)
+      puts @secret_code
+    end
+  end
 
+  def select_choice
+    if player1 == 'codebreaker'
+      #validate choice and get selection
+      @row_guess = get_selection
+    else
+      # computer is codebreaker so auto select
+      @row_guess = get_autoselection
+    end
+  end
+
+  def get_autoselection
+    values = @colour_pegs.values
+    extra_values = []
+    values.cycle(3) {|x| extra_values << x}
+    puts "----- Computer Row Selection -----"
+    @computer_selection = extra_values.sample(4)
+    puts @computer_selection
+  end
+
+  def breaker_instructions
+    puts "How to play:"
+    puts
+    puts "\tSelect the colour pegs in the order you want placed"
+    puts "\te.g. slot order is 1234, if you select blue green cyan purple,"
+    puts "\tthe order selection will be 2145."
+
+    puts
+  end
+
+  def maker_instructions
+    puts "How to select secret code:"
+    puts
+    puts "\tSelect the colour pegs in the order you want placed"
+    puts "\te.g. colour order is 1234, if you select blue green cyan purple,"
+    puts "\tthe order selection will be 2145 for your code."
+
+    puts
+  end
+end
 
 # Games Main code starts here
 
@@ -133,34 +209,59 @@ puts "\t\tMasterMind Demo 1.0\n\n"
 game = Mastermind.new()
 
 while game.play == 'Y'
-
+  # Choose number of games to play
   games = Validator.get_games
-  game.game_count = 0
 
-  while game.game_count < games
-    game.game_rows = game.get_rows
+  game.game_rows = game.get_rows
+  game.board = game.make_board(game.game_rows)  
+  puts
 
-    game.board = game.make_board(game.game_rows)
-    game.display(game.board)
-    rows = 0
+  # Choose whether codemaker or codebreaker
+  game.choose_profile
 
-    game.choose_profile
+  # if player1 (you) is codemaker, select secret code, computer select peg to place on board
+  # else player1(You) is codebreaker, select pegs to place on the board, computer select secret code
+
+  
+
+  # Go through each game
+  games.times do |game_num|
+    puts "Game # #{game_num + 1}"
+    puts
+    # code maker to select code
+    game.select_code
     puts
 
-    while game.game_rows != 0
-      rows += 1
-      puts "Row #:#{rows}"
+    game.player1 == 'codebreaker' ? game.breaker_instructions : game.maker_instructions
+
+    game.display(game.board)
+    puts
+
+    game.game_rows.times do |row|
+      puts "Row #:#{row + 1}"
       puts
-      
-      
 
-      # code maker play
-      
+      # code breaker place colour selection on board
+      case game.player1
+        when 'codebreaker'
+          puts "Player1 (YOU) are codebreaker, select pegs for board"
+          puts "Player2 (COMP) are codemaker, secret code: #{game.secret_code}"
+          # Computer select secret code
+          # game.select_code
+        when 'codemaker'
+          puts "Player1 (YOU) are codemaker, select your secret code"
+          puts "Player2 (COMP) are codebreaker, select pegs for board"
+        else
+        puts "Error: something went wrong with #{game.player1}"
+      end
 
-      game.game_rows -= 1
+      # code maker assess then return review/result#n
+
+      # DISPLAY THE BOARD and REVIEW/RESULT
+      # if correct (WELL DONE!) break out of game
+      # else give review and load next row
+      
     end
-
-    game.game_count += 1
   end
 
   game.play = game.get_play

@@ -3,10 +3,10 @@
 # puts "How to play:"
 # puts
 # puts "\tSelect the colour pegs in the order you want placed"
-# puts "\te.g. slot order is 1 2 3 4, if you select blue green cyan purple,"
-# puts "\tthe order will be: blue, green, cyan, purple"
+# puts "\te.g. slot order is 1234, if you select blue green cyan purple,"
+# puts "\tthe order will be 2145"
 # puts
-# puts "Select number associated with the color seperated by space and press enter"
+# puts "Select numbers associated with your color selection (e.g 1234) and press enter"
 # puts
 puts "1.green\n2.blue\n3.yellow\n4.cyan\n5.purple\n6.brown"
 selected = gets.chomp
@@ -14,7 +14,7 @@ selected = gets.chomp
 
 loop do
     if(selected.length != 4)
-        puts "Four colours should be selected"
+        puts "Only four colours should be selected"
         selected = gets.chomp
     elsif(!((selected.split(//)).all? {|x| (x.to_i).between?(1,6)}))
         puts "Select colours between 1-6"
@@ -24,9 +24,9 @@ loop do
         break
     end
 end
-select_arr = selected.split(//)
+# select_arr = selected.split(//)
 
-select_arr.all? {|x| (x.to_i).between?(1,6)} ? (puts "Yes") : (puts "Nope!")
+# select_arr.all? {|x| (x.to_i).between?(1,6)} ? (puts "Yes") : (puts "Nope!")
 p selected
 
 
