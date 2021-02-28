@@ -45,7 +45,7 @@ module Validator
 
   def get_profile
     players = ["codemaker", "codebreaker"]
-    puts "Choose your player profile:\n1. Codemaker\n2. Codebreaker"
+    puts "Choose your player profile:\n1. codemaker\n2. codebreaker"
       choice = gets.chomp.to_i
       loop do
         case choice
@@ -222,8 +222,6 @@ while game.play == 'Y'
   # if player1 (you) is codemaker, select secret code, computer select peg to place on board
   # else player1(You) is codebreaker, select pegs to place on the board, computer select secret code
 
-  
-
   # Go through each game
   games.times do |game_num|
     puts "Game # #{game_num + 1}"
@@ -245,7 +243,8 @@ while game.play == 'Y'
       case game.player1
         when 'codebreaker'
           puts "Player1 (YOU) are codebreaker, select pegs for board"
-          puts "Player2 (COMP) are codemaker, secret code: #{game.secret_code}"
+          puts "Player2 (COMP) are codemaker, secret code: "
+          game.secret_code.each {|peg| print peg}
           # Computer select secret code
           # game.select_code
         when 'codemaker'
