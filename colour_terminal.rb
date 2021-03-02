@@ -10,8 +10,8 @@ code_pegs = {
 }
 
 key_pegs = {
-    white: "\e[38;2;255;255;255mwhite\e[0m",
-    red: "\e[38;2;255;0;0mred\e[0m"
+    white: "\e[38;2;255;255;255m0\e[0m", #white
+    red: "\e[38;2;255;0;0m0\e[0m"         # red
 }
 
 # print "\e[32;38;4;1mgreen\e[0m \e[34;38;4;1mblue\e[0m \n"
@@ -62,6 +62,10 @@ puts
 # puts "\e[38;2;128;0;0mmaroon\e[0m"
 # puts "--- Purple ---"
 # puts "\e[38;2;128;0;128mpurple\e[0m"
+
+# ESC[ 38;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB foreground color
+# ESC[ 48;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB background color
+print "\e[32;38;4;1m0\e[0m \e[34;38;4;1m0\e[0m \n"
 
 
 
