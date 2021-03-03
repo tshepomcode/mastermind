@@ -93,7 +93,7 @@ module Validator
     # puts "@game_rows = #{@game_rows}"
     if @game_rows == 8
       # puts "1.green\n2.blue\n3.yellow\n4.cyan\n5.purple\n6.brown"
-      puts "1.green 2.blue 3.yellow 4.cyan 5.purple 6.brown"
+      # puts "1.green 2.blue 3.yellow 4.cyan 5.purple 6.brown"
     end
     
     selected = gets.chomp
@@ -120,10 +120,10 @@ class Mastermind
   include Board
   include Validator
 
-  attr_accessor :code_maker, :code_breaker, :board, :review_pegs,
+  attr_accessor :code_maker, :code_breaker, :board, :review,
   :game_count, :game_rows, :play, :player1, :player2, :secret_code,
   :computer_selection, :row_guess
-  attr_reader :colour_pegs, :code_pegs
+  attr_reader :colour_pegs, :review_pegs
 
   def initialize
       @game_count, @game_rows = 0
@@ -180,7 +180,7 @@ class Mastermind
       # @row_guess = get_selection
       selection = get_selection
       puts "Selection: #{selection}"
-      puts "Class is: #{selection.class}"
+      # puts "Class is: #{selection.class}"
       # @row_guess = values.values_at(selection.to_i[])
       selection.each_char {|ch| @row_guess.push(values[ch.to_i - 1])}
       # puts "@row_guess = #{@row_guess}"
@@ -188,6 +188,16 @@ class Mastermind
     else
       # computer is codebreaker so auto select
       @row_guess = get_autoselection
+    end
+  end
+
+  def review_choice
+    @review = []
+    @row_guess.each_with_index do | i, idx|
+      if (@secret_code.any?(i))
+        secret_code_idx = @secret_code.find_index(i)
+        idx == secret_code_idx ? @review.push(@review_pegs[:red]) : @review.push(@review_pegs[:white])
+      end
     end
   end
 
@@ -201,11 +211,13 @@ class Mastermind
   end
 
   def breaker_instructions
-    puts "How to play:"
+    puts "How to choose the colours to guess the hidden code:"
     puts
     puts "\tSelect the colour pegs in the order you want placed"
-    puts "\te.g. slot order is 1234, if you select blue green cyan purple,"
-    puts "\tthe order selection will be 2145."
+    puts "\t1.green 2.blue 3.yellow 4.cyan 5.purple 6.brown"
+    puts "\te.g. if you select 2145, the order will be as follows:"
+    puts "\t#{@colour_pegs[:blue]} #{@colour_pegs[:green]} #{@colour_pegs[:cyan]} #{@colour_pegs[:purple]}."
+    # print "\t#{@colour_pegs[:blue]} #{@colour_pegs[:green]} #{@colour_pegs[:cyan]} #{@colour_pegs[:purple]}"
 
     puts
   end
@@ -214,8 +226,9 @@ class Mastermind
     puts "How to select a secret code:"
     puts
     puts "\tSelect the colour pegs in the order you want placed"
-    puts "\te.g. colour order is 1234, if you select blue green cyan purple,"
-    puts "\tthe order selection will be 2145 for your code."
+    puts "\t1.green 2.blue 3.yellow 4.cyan 5.purple 6.brown"
+    puts "\te.g. if you select 2145, the order will be as follows:"
+    puts "\t#{@colour_pegs[:blue]} #{@colour_pegs[:green]} #{@colour_pegs[:cyan]} #{@colour_pegs[:purple]}."
 
     puts
   end
@@ -263,8 +276,12 @@ while game.play == 'Y'
         when 'codebreaker'
           puts "Player1 (YOU) are codebreaker, select pegs for board"
           game.select_choice
+          game.review_choice
           #check choice against secret code
+          print "\tGuess: "
           game.row_guess.each {|x| print "#{x} " }
+          print "\t Review: "
+          game.review.each {|r| print "#{r} "}
           puts
           # display choice and feedback
           
