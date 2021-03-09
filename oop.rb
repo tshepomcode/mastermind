@@ -1,3 +1,5 @@
+require 'pry'
+
 module Board
   
   def display(board)
@@ -122,7 +124,7 @@ class Mastermind
 
   attr_accessor :code_maker, :code_breaker, :board, :review,
   :game_count, :game_rows, :play, :player1, :player2, :secret_code,
-  :computer_selection, :row_guess
+  :computer_selection, :row_guess, :win
   attr_reader :colour_pegs, :review_pegs
 
   def initialize
@@ -131,17 +133,17 @@ class Mastermind
       @play = "Y"
 
       @colour_pegs = {
-          green: "\e[38;2;0;128;0mgreen\e[0m",
-          blue: "\e[38;2;138;43;226mblue\e[0m",
-          yellow: "\e[38;2;255;255;0myellow\e[0m",
-          cyan: "\e[38;2;0;255;255mcyan\e[0m",
-          purple: "\e[38;2;128;0;128mpurple\e[0m",
-          brown: "\e[38;2;168;42;42mbrown\e[0m"
-      }
+        green: "\e[38;2;255;255;255m\e[48;2;0;128;0m  1  \e[0m",
+        blue: "\e[38;2;255;255;255m\e[48;2;0;0;255m  2  \e[0m",
+        yellow: "\e[38;2;255;255;255m\e[48;2;255;215;0m  3  \e[0m",
+        cyan: "\e[38;2;255;255;255m\e[48;2;0;255;255m  4  \e[0m",
+        purple: "\e[38;2;255;255;255m\e[48;2;128;0;128m  5  \e[0m",
+        brown: "\e[38;2;255;255;255m\e[48;2;165;42;42m  6  \e[0m"
+    }
 
       @review_pegs = {
-          white: "\e[38;2;255;255;255mwhite\e[0m",
-          red: "\e[38;2;255;0;0mred\e[0m"
+        white: "\e[38;2;0;0;0m\e[48;2;255;255;255m 0 \e[0m", #white
+        red: "\e[38;2;255;255;255m\e[48;2;255;0;0m 0 \e[0m"  # red
       }
   end
 
@@ -192,13 +194,23 @@ class Mastermind
   end
 
   def review_choice
+    
     @review = []
-    @row_guess.each_with_index do | i, idx|
-      if (@secret_code.any?(i))
-        secret_code_idx = @secret_code.find_index(i)
-        idx == secret_code_idx ? @review.push(@review_pegs[:red]) : @review.push(@review_pegs[:white])
+    if @row_guess == @secret_code 
+       @win = true
+    else
+      @row_guess.each_with_index do | i, idx|
+        if (@secret_code.any?(i))
+          secret_code_idx = @secret_code.find_index(i)
+          idx == secret_code_idx ? @review.push(@review_pegs[:red]) : @review.push(@review_pegs[:white])
+        else
+          @review.push("")
+        end
+        # binding.pry
       end
     end
+    
+    # binding.pry
   end
 
   def get_autoselection
@@ -231,6 +243,10 @@ class Mastermind
     puts "\t#{@colour_pegs[:blue]} #{@colour_pegs[:green]} #{@colour_pegs[:cyan]} #{@colour_pegs[:purple]}."
 
     puts
+  end
+
+  def winner
+    @review.all?(@review_pegs[:red]) ? @win = true : @win = false
   end
 end
 
@@ -274,9 +290,14 @@ while game.play == 'Y'
       # code breaker place colour selection on board
       case game.player1
         when 'codebreaker'
-          puts "Player1 (YOU) are codebreaker, select pegs for board"
+          # puts "Player1 (YOU) are codebreaker, select pegs for board"
           game.select_choice
           game.review_choice
+          game.winner
+          if (game.win)
+            puts "You solved it! Well done!"
+            break
+          end
           #check choice against secret code
           print "\tGuess: "
           game.row_guess.each {|x| print "#{x} " }
@@ -285,7 +306,7 @@ while game.play == 'Y'
           puts
           # display choice and feedback
           
-          puts "Player2 (COMP) is codemaker, secret code: "
+          # puts "Player2 (COMP) is codemaker, secret code: "
           # computer assess choice against secret code and update board on review
           # display board with feedback
           # if player choice matches secret code, break
