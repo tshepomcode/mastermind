@@ -156,8 +156,8 @@ class Mastermind
   def select_secret
     # selection of the secret code
     if @player1 == 'codemaker'
-      puts "You are the #{@player1}"
-      puts "The computer is the #{@player2}"
+      # puts "You are the #{@player1}"
+      # puts "The computer is the #{@player2}"
       puts
       # you choose the code
       @secret_code = get_selection
@@ -181,7 +181,7 @@ class Mastermind
       #validate choice and get selection
       # @row_guess = get_selection
       selection = get_selection
-      puts "Selection: #{selection}"
+      # puts "Selection: #{selection}"
       # puts "Class is: #{selection.class}"
       # @row_guess = values.values_at(selection.to_i[])
       selection.each_char {|ch| @row_guess.push(values[ch.to_i - 1])}
@@ -199,14 +199,21 @@ class Mastermind
     if @row_guess == @secret_code 
        @win = true
     else
-      @row_guess.each_with_index do | i, idx|
-        if (@secret_code.any?(i))
-          secret_code_idx = @secret_code.find_index(i)
-          idx == secret_code_idx ? @review.push(@review_pegs[:red]) : @review.push(@review_pegs[:white])
+      @row_guess.each_with_index do | x, i|
+        mapped = @secret_code.map.with_index { |c, cix| cix if x == c}.compact
+        # puts "mapped: #{mapped}"
+        if(mapped.empty?)
+          # puts "Nothing found"
         else
-          @review.push("")
+          # puts "Found something mapped: #{mapped}"
+          if(mapped.one?(i))
+            # puts "Found value and position"
+            @review.push(@review_pegs[:red])
+          else
+            # puts "Found value not position"
+            @review.push(@review_pegs[:white])
+          end
         end
-        # binding.pry
       end
     end
     
@@ -246,7 +253,7 @@ class Mastermind
   end
 
   def winner
-    @review.all?(@review_pegs[:red]) ? @win = true : @win = false
+    @secret_code == @row_guess ? @win = true : @win = false
   end
 end
 
@@ -272,8 +279,9 @@ while game.play == 'Y'
 
   # Go through each game
   games.times do |game_num|
-    puts "Game # #{game_num + 1}"
-    puts
+    puts "\t\tGAME # #{game_num + 1}"
+    puts "\n\n\n\n"
+    game.win = false
     # code maker to select code
     game.select_secret
     puts
@@ -295,36 +303,47 @@ while game.play == 'Y'
           game.review_choice
           game.winner
           if (game.win)
-            puts "You solved it! Well done!"
+            puts "\t\tYou solved it! Well done!"
+            puts
+            puts "\t\t--- Your Guess ----"
+            print "\t"
+            game.row_guess.each {|x| print "#{x} "}
+            puts
+            puts "\t\t--- Secret Code ---"
+            print "\t"
+            game.secret_code.each {|x| print "#{x} "}
+            puts "\n\n"
             break
+          elsif(row == 7 && !game.win)
+            puts "\t\t SORRY YOU LOSE! :("
+            puts
+            print "\tGuess: "
+            game.row_guess.each {|x| print "#{x} "}
+            print "\t Review: "
+            game.review.each {|r| print "#{r} "}
+            puts "\t\t--- Secret Code ---"
+            print "\t"
+            game.secret_code.each {|x| print "#{x} "}
+            puts "\n\n"
+            break
+            break
+          else
+            # puts "Game row: #{row}"
+            print "\tGuess: "
+            game.row_guess.each {|x| print "#{x} "}
+            print "\t Review: "
+            game.review.each {|r| print "#{r} "}
+            puts "\n\n"
           end
           #check choice against secret code
-          print "\tGuess: "
-          game.row_guess.each {|x| print "#{x} " }
-          print "\t Review: "
-          game.review.each {|r| print "#{r} "}
-          puts
-          # display choice and feedback
-          
-          # puts "Player2 (COMP) is codemaker, secret code: "
-          # computer assess choice against secret code and update board on review
-          # display board with feedback
-          # if player choice matches secret code, break
-          # game.secret_code.each {|peg| print peg + " "}
-          puts
         when 'codemaker'
           puts "Player1 (YOU) are codemaker, select your secret code"
+          game.select_choice
           puts "Player2 (COMP) are codebreaker, select pegs for board"
+          game.get_autoselection
         else
         puts "Error: something went wrong with #{game.player1}"
       end
-
-      # code maker assess then return review/result#n
-
-      # DISPLAY THE BOARD and REVIEW/RESULT
-      # if correct (WELL DONE!) break out of game
-      # else give review and load next row
-      
     end
   end
 
